@@ -146,3 +146,18 @@ exports.searchItems = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.getProductDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const item = await Item.findOne({ _id:id });
+
+        if(!item) {
+            return res.status(404).json({ message: 'Item not found' });
+        }
+
+        res.status(200).json(item);
+    } catch(error) {
+        res.status(500).json({ error: error.message });
+    }
+};
