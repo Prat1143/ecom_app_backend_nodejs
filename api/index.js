@@ -1,18 +1,22 @@
+// Load environment variables
 require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
-const itemRoutes = require('./routes/itemRoutes');
-const cartRoutes = require('./routes/cartRoutes');
-const authRoutes = require('./routes/authRoutes');
-const chatRoutes = require('./routes/chatRoutes');
+// Import route files
+const itemRoutes = require('../routes/itemRoutes');
+const cartRoutes = require('../routes/cartRoutes');
+const authRoutes = require('../routes/authRoutes');
+const chatRoutes = require('../routes/chatRoutes');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Connect to MongoDB
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGODB_URI, {
@@ -26,6 +30,7 @@ const connectDB = async () => {
     }
 };
 
+// API Routes
 app.use('/api/items', itemRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/auth', authRoutes);
@@ -35,9 +40,9 @@ app.get('/', (req, res) => {
     res.send('App is working!');
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Export the app as a serverless function for Vercel to handle requests
+module.exports = (req, res) => {
+    app(req, res); // Pass the request and response to your Express app
+};
 
 connectDB();
